@@ -54,8 +54,30 @@ class SdHrDocumentsAttachments(models.Model):
             rec.expiration = expiration
 
     # TODO: cron for recalculate expirations
+    #   Ignore notification if it is expired. Otherwise it will send notification forever.
     def expiration_cron(self):
         pass
+
+    employee_document_count = fields.Integer(compute='_compute_employee_document_count')
+
+
+    def _compute_employee_document_count(self):
+        attachments = self.search([])
+        for rec in self:
+            rec.employee_document_count = len(list([att for att in attachments if att.employee_id == rec.employee_id ]))
+
+    def employee_action_document_view(self):
+        self.ensure_one()
+        # return {}
+        return {
+            'name': _('documents'),
+            'domain': [('employee_id', '=', self.employee_id.id)],
+            'res_model': 'sd_hr_documents.attachments',
+            'type': 'ir.actions.act_window',
+            'view_id': False,
+            'view_mode': 'tree,form',
+            'context': "{'employee_id': %s}" % self.employee_id.id
+        }
 
 
 class SdHrDocumentsTypes(models.Model):
