@@ -16,6 +16,13 @@ class SdHrDocumentsAttachments(models.Model):
     employee_id = fields.Many2one('hr.employee', default=lambda self: self.env.context.get('employee_id', False),
                                   string="Employee", index=True,
                                   required=True)
+    related_model = fields.Many2one('ir.model', string="Related Model",  default=lambda self: self.env.context.get('related_model', False),
+                                    domain="[('model', 'in', ['hr.contract', 'sd_hr_relatives.members', ])]"  )
+    related_res_id = fields.Integer(string="Related ID", default=lambda self: self.env.context.get('related_res_id', False))
+    related_res_name = fields.Char(string="Related Name", default=lambda self: self.env.context.get('related_res_name', False))
+
+    related_model_records1 = fields.Many2one('',  )
+    # related_model_record = fields.Many2one(related='related_model.id')
     document_type = fields.Many2one('sd_hr_documents.document_type', required=True, tracking=True,)
     issue_date = fields.Date()
     expire_date = fields.Date()
@@ -27,6 +34,19 @@ class SdHrDocumentsAttachments(models.Model):
     notify_duration = fields.Selection([('daily', 'Daily'), ('weekly', 'Weekly'), ],
                                    default='weekly',  )
 
+
+
+
+    @api.onchange('related_model')
+    def _onchange_model_id(self):
+        if self.related_model:
+            # Update the record_id domain to filter based on the selected model
+            model_name = self.related_model.model
+            # return {'domain': {'related_model_records': [('model', '=', model_name)]}}
+            return {'domain': {'related_model_records': []}}
+        else:
+            return {'domain': {'related_model_records': []}}
+
     # TODO: Notify process
 
     @api.onchange('issue_date', 'expire_date', 'notify_days')
@@ -34,11 +54,11 @@ class SdHrDocumentsAttachments(models.Model):
         today = fields.Date.today()
         for rec in self:
             if rec.issue_date and rec.issue_date > fields.Date.today():
-                raise UserError(_('Issue date cannot after today date.'))
+                raise UserError(_("Issue date cannot be after today's date."))
 
             if rec.expire_date:
                 if rec.issue_date and (rec.expire_date < rec.issue_date):
-                    raise UserError(_('Expire date is not correct.'))
+                    raise UserError(_("Expire date is not correct."))
 
                 expiration = int((rec.expire_date - today).days)
 
@@ -68,7 +88,9 @@ class SdHrDocumentsAttachments(models.Model):
 
     def employee_action_document_view(self):
         self.ensure_one()
-        # return {}
+        context = dict(self.env.context)
+        context['employee_id'] = self.employee_id.id
+        print(f"\n *************\n employee_action_document_view: {self}")
         return {
             'name': _('documents'),
             'domain': [('employee_id', '=', self.employee_id.id)],
@@ -76,9 +98,23 @@ class SdHrDocumentsAttachments(models.Model):
             'type': 'ir.actions.act_window',
             'view_id': False,
             'view_mode': 'tree,form',
-            'context': "{'employee_id': %s}" % self.employee_id.id
+            'context': context
         }
 
+    def related_model_action(self):
+        print(f"\n MMMMMMMMMMMMM \n related_model_action: {self.related_model}")
+        context = {}
+        domain = []
+        return {
+                    # 'name': _('documents'),
+                    'domain': domain,
+                    'res_model': self.related_model.model,
+                    'res_id': self.related_res_id,
+                    'type': 'ir.actions.act_window',
+                    'view_id': False,
+                    'view_mode': 'form',
+                    'context': context
+                }
 
 class SdHrDocumentsTypes(models.Model):
     _name = 'sd_hr_documents.document_type'
