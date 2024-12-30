@@ -20,13 +20,16 @@ class SdHrdocumentsEmployee(models.Model):
 
     def action_document_view(self):
         self.ensure_one()
+        context = dict(self.env.context)
+        context['default_employee_id'] = self.id
+        domain = [('employee_id', '=', self.id)]
         # return {}
         return {
             'name': _('documents'),
-            'domain': [('employee_id', '=', self.id)],
+            'domain': domain,
             'res_model': 'sd_hr_documents.attachments',
             'type': 'ir.actions.act_window',
             'view_id': False,
             'view_mode': 'tree,form',
-            'context': "{'employee_id': %s}" % self.id
+            'context': context,
         }
