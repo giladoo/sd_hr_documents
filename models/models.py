@@ -9,20 +9,20 @@ class SdHrDocumentsAttachments(models.Model):
 
     _order = 'employee_id,issue_date'
 
-    state = fields.Selection([('valid', 'Valid'), ('expiring', 'Expiring'), ('expired', 'Expired')],
-                             default='valid', required=True, store=True, copy=False, tracking=True )
+    state = fields.Selection([('draft', 'Draft'),('valid', 'Valid'), ('expiring', 'Expiring'), ('expired', 'Expired')],
+                             default='draft', required=True, store=True, copy=False, tracking=True )
     name = fields.Char(required=True, tracking=True, copy=False)
 
     employee_id = fields.Many2one('hr.employee', default=lambda self: self.env.context.get('default_employee_id', False),
                                   string="Employee", index=True,
                                   required=True)
-    related_model = fields.Many2one('ir.model', string="Related Model",
-                                    default=lambda self: self.env.context.get('default_related_model', False),
-                                    domain="[('model', 'in', ['hr.contract', 'sd_hr_relatives.members', ])]"  )
-    related_res_id = fields.Integer(string="Related ID", default=lambda self: self.env.context.get('default_related_res_id', False))
-    related_res_name = fields.Char(string="Related Name", default=lambda self: self.env.context.get('default_related_res_name', False))
+    # related_model = fields.Many2one('ir.model', string="Related Model",
+    #                                 default=lambda self: self.env.context.get('default_related_model', False),
+    #                                 domain="[('model', 'in', ['hr.contract', 'sd_hr_relatives.members', ])]"  )
+    # related_res_id = fields.Integer(string="Related ID", default=lambda self: self.env.context.get('default_related_res_id', False))
+    # related_res_name = fields.Char(string="Related Name", default=lambda self: self.env.context.get('default_related_res_name', False))
 
-    related_model_records1 = fields.Many2one('',  )
+    # related_model_records1 = fields.Many2one('',  )
     # related_model_record = fields.Many2one(related='related_model.id')
     document_type = fields.Many2one('sd_hr_documents.document_type', required=True, tracking=True,)
     issue_date = fields.Date()
@@ -35,18 +35,7 @@ class SdHrDocumentsAttachments(models.Model):
     notify_duration = fields.Selection([('daily', 'Daily'), ('weekly', 'Weekly'), ],
                                    default='weekly',  )
 
-
-
-
-    @api.onchange('related_model')
-    def _onchange_model_id(self):
-        if self.related_model:
-            # Update the record_id domain to filter based on the selected model
-            model_name = self.related_model.model
-            # return {'domain': {'related_model_records': [('model', '=', model_name)]}}
-            return {'domain': {'related_model_records': []}}
-        else:
-            return {'domain': {'related_model_records': []}}
+    attachments = fields.Many2many('ir.attachment')
 
     # TODO: Notify process
 
@@ -78,22 +67,7 @@ class SdHrDocumentsAttachments(models.Model):
     #   Ignore notification if it is expired. Otherwise it will send notification forever.
     def expiration_cron(self):
         pass
-    context_str = fields.Text(compute='_context_str')
     employee_document_count = fields.Integer(compute='_compute_employee_document_count')
-
-    @api.model
-    def _context_str(self):
-        context = dict(self.env.context)
-        print(f"\n >>>>>>>>>>>>>> 1\n {context}")
-        if self.id:
-            context['default_employee_id'] = self.employee_id.id if self.employee_id else False
-            context['default_related_model'] = self.related_model.id if self.related_model else False
-            context['default_related_res_id'] = self.related_res_id
-            context['default_related_res_name'] = self.related_res_name
-            print(f"\n >>>>>>>>>>>>>> 2\n {context}")
-
-        self.context_str = context
-        return {'context': context}
 
 
     @api.model
@@ -102,12 +76,17 @@ class SdHrDocumentsAttachments(models.Model):
         for rec in self:
             rec.employee_document_count = len(list([att for att in attachments if att.employee_id == rec.employee_id ]))
 
+    @api.onchange('attachments')
+    def check_attachments(self):
+        for rec in self:
+            if len(rec.attachments) == 0:
+                rec.state = 'draft'
 
-    @api.model
-    def default_get(self, fields_list):
-        defaults = super(SdHrDocumentsAttachments, self).default_get(fields_list)
-        context = dict(self.env.context)
-        print(f"\n >>>>>>> default_get \n {fields_list} \n\n {defaults} \n\n {context}\n \n")
+    # @api.model
+    # def default_get(self, fields_list):
+        # defaults = super(SdHrDocumentsAttachments, self).default_get(fields_list)
+        # context = dict(self.env.context)
+        # print(f"\n >>>>>>> default_get \n {fields_list} \n\n {defaults} \n\n {context}\n \n")
         # if self.env.context.get('copy_from_previous'):
         #     last_record_id = self.env.context.get('last_record_id')
         #     if last_record_id:
@@ -117,7 +96,7 @@ class SdHrDocumentsAttachments(models.Model):
         #             'name': last_record.name,
         #             'description': last_record.description,
         #         })
-        return defaults
+        # return defaults
 
     def employee_action_document_view(self):
         self.ensure_one()
@@ -135,7 +114,7 @@ class SdHrDocumentsAttachments(models.Model):
         }
 
     def related_model_action(self):
-        print(f"\n MMMMMMMMMMMMM \n related_model_action: {self.related_model}")
+        # print(f"\n MMMMMMMMMMMMM \n related_model_action: {self.related_model}")
         context = {}
         domain = []
         return {
@@ -154,6 +133,6 @@ class SdHrDocumentsTypes(models.Model):
     _description = 'document Type'
 
     name = fields.Char(required=True, translate=True)
-
+    auto_create = fields.Boolean(default=False)
 
 

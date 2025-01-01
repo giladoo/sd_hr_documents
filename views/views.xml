@@ -29,23 +29,16 @@
 
                     <div class="oe_title mb24">
                         <div class="h3 mb-3 employee_id">
-                            <field name="employee_id" class="me-5" readonly="1" options="{'no_open': 0}"
-                                   widget="many2one_avatar_employee"/>
-                        </div>
-                        <div class="h2 mb-3" invisible="related_res_id == 100000">
-                            <field name="related_res_id" invisible="1"/>
-                            <button type="object" name="related_model_action" class="o_form_uri ms-5">
-                                <field name="related_res_name" readonly="1" />
-                            </button>
-<!--                            <field name="related_model" class="me-5"  widget="filterable_selection" readonly="1"/>-->
+                            <field name="employee_id" class="me-5" readonly="id != False" options="{'no_open': 0}"
+                                   widget="many2one_avatar_employee" placeholder="Select Employee"/>
                         </div>
                         <div class=" h1 ms-5 mb-4">
-                            <field name="name"/>
+                            <field name="name" placeholder="Document Name"/>
                         </div>
                     </div>
                     <group>
                         <group>
-                            <field name="document_type"/>
+                            <field name="document_type" placeholder="Select Document Type"/>
                         </group>
                         <group>
                             <field name="issue_date"/>
@@ -56,9 +49,15 @@
                             <field name="notify_type" invisible="expire_date == False or notify_duration == False"/>
                         </group>
                     </group>
-                            <field name="context_str" />
+                    <group>
+                            <field name="attachments" widget="many2many_binary" class="" readonly="0" string="ATTACH"/>
+
+                    </group>
                     <div class="text-end">
-                            <field name="message_ids" widget="attachment_button"/>
+<!--                            <field name="message_ids" widget="attachment_button"/>-->
+                        <div class="">
+
+                        </div>
                     </div>
 
 
@@ -78,9 +77,6 @@
             <tree>
                 <field name="name"/>
                 <field name="employee_id" />
-                <field name="related_res_name" />
-                <field name="related_model"/>
-                <field name="related_res_id" column_invisible="1"/>
                 <field name="document_type"/>
                 <field name="issue_date"/>
                 <field name="expiration"/>
@@ -98,7 +94,7 @@
         <field name="inherit_id" ref="sd_hr_documents.document_attachments_view_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
-                <attribute name="create">0</attribute>
+                <attribute name="create">1</attribute>
             </xpath>
         </field>
     </record>
@@ -110,7 +106,7 @@
         <field name="inherit_id" ref="sd_hr_documents.document_attachments_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="attributes">
-                <attribute name="create">0</attribute>
+                <attribute name="create">1</attribute>
             </xpath>
         </field>
     </record>
@@ -143,6 +139,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="auto_create"/>
                     </group>
                 </sheet>
             </form>
@@ -155,6 +152,7 @@
         <field name="arch" type="xml">
             <tree editable="bottom">
                 <field name="name"/>
+                <field name="auto_create"/>
             </tree>
         </field>
     </record>
