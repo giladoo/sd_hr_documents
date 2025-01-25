@@ -33,14 +33,12 @@
                                    widget="many2one_avatar_employee" placeholder="Select Employee"/>
                         </div>
                         <div class=" h1 ms-5 mb-4">
-                            <field name="name" placeholder="Document Name"/>
+                            <field name="document_type" placeholder="Select Document Type"/>
                         </div>
                     </div>
                     <group>
                         <group>
-                            <field name="document_type" placeholder="Select Document Type"/>
-                        </group>
-                        <group>
+                            <field name="name" placeholder="Document Name"/>
                             <field name="issue_date"/>
                             <field name="expire_date"/>
                             <field name="expiration" readonly="1" invisible="expire_date == False"/>
@@ -48,8 +46,11 @@
                             <field name="notify_duration" invisible="expire_date == False"/>
                             <field name="notify_type" invisible="expire_date == False or notify_duration == False"/>
                         </group>
+                        <group>
+                        </group>
                     </group>
                     <group>
+<!--                            <field name="attachments" widget="many2many_binary" class="" readonly="0" string="ATTACH"/>-->
                             <field name="attachments" widget="many2many_binary" class="" readonly="0" string="ATTACH"/>
 
                     </group>
@@ -74,10 +75,10 @@
         <field name="name">document.attachments.view.tree</field>
         <field name="model">sd_hr_documents.attachments</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name"/>
+            <tree >
                 <field name="employee_id" />
                 <field name="document_type"/>
+                <field name="name"/>
                 <field name="issue_date"/>
                 <field name="expiration"/>
                 <field name="state" widget="badge"

@@ -11,7 +11,7 @@ class SdHrDocumentsAttachments(models.Model):
 
     state = fields.Selection([('draft', 'Draft'),('valid', 'Valid'), ('expiring', 'Expiring'), ('expired', 'Expired')],
                              default='draft', required=True, store=True, copy=False, tracking=True )
-    name = fields.Char(required=True, tracking=True, copy=False)
+    name = fields.Char(required=False, tracking=True, copy=False)
 
     employee_id = fields.Many2one('hr.employee', default=lambda self: self.env.context.get('default_employee_id', False),
                                   string="Employee", index=True,
