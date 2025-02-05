@@ -32,7 +32,7 @@ class SdHrdocumentsEmployee(models.Model):
             'res_model': 'sd_hr_documents.attachments',
             'type': 'ir.actions.act_window',
             'view_id': False,
-            'view_mode': 'tree,form',
+            'view_mode': 'list,form',
             'context': context,
         }
 
