@@ -40,24 +40,21 @@ class SdHrdocumentsEmployee(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         res = super().create(vals_list)
-        documents = self.create_documents(res.id, False)
-        if not documents:
-            logging.error(f"Default documents for new employee failed, res_id: {res.id}")
+        self.create_documents(res.ids, False)
         return res
 
-    def create_documents(self, employee_id, res_id):
+    def create_documents(self, employee_ids, res_id):
         documents_model = self.env['sd_hr_documents.attachments']
         auto_create = self.env['sd_hr_documents.document_type'].search([('auto_create', '=', True)])
         try:
-            for rec in auto_create:
-                documents_model.create({
-                    'employee_id': employee_id,
-                    'relative_id': res_id,
-                    'document_type': rec.id,
-                    'name': rec.name,
-                })
-            done = True
+            for employee_id in employee_ids:
+                for rec in auto_create:
+                    documents_model.create({
+                        'employee_id': employee_id,
+                        'relative_id': res_id,
+                        'document_type': rec.id,
+                        'name': rec.name,
+                    })
         except Exception as e:
-            done = False
+            logging.error(f"Default documents for new employee failed, employee_id: {employee_id}")
 
-        return done

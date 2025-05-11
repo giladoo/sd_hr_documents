@@ -64,7 +64,7 @@
             <field name="auto_create">True</field>
         </record>
 
-        <record id="document_type_13" model="sd_hr_documents.document_type">
+        <record id="document_type_14" model="sd_hr_documents.document_type">
             <field name="name">Recruitment Form</field>
             <field name="auto_create">True</field>
         </record>
