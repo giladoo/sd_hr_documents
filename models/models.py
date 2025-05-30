@@ -34,6 +34,7 @@ class SdHrDocumentsAttachments(models.Model):
                                    default='odoo', required=True )
     notify_duration = fields.Selection([('daily', 'Daily'), ('weekly', 'Weekly'), ],
                                    default='weekly',  )
+    resume_document = fields.Boolean(default=False)
 
     attachments = fields.Many2many('ir.attachment')
 
@@ -102,7 +103,7 @@ class SdHrDocumentsAttachments(models.Model):
         self.ensure_one()
         context = dict(self.env.context)
         context['default_employee_id'] = self.employee_id.id
-        print(f"\n *************\n employee_action_document_view:context:\n {context}\n")
+        # print(f"\n *************\n employee_action_document_view:context:\n {context}\n")
         return {
             'name': _('documents'),
             'domain': [('employee_id', '=', self.employee_id.id)],

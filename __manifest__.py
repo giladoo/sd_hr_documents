@@ -13,6 +13,7 @@
     'application': False,
     'depends': ['base', 'hr',],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/hr_employee_views.xml',
