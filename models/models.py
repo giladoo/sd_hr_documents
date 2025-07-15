@@ -35,6 +35,7 @@ class SdHrDocumentsAttachments(models.Model):
     notify_duration = fields.Selection([('daily', 'Daily'), ('weekly', 'Weekly'), ],
                                    default='weekly',  )
 
+
     attachments = fields.Many2many('ir.attachment')
 
     # TODO: Notify process

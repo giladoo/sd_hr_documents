@@ -12,7 +12,7 @@ class SdHrdocumentsEmployee(models.Model):
 
 
     document_count = fields.Integer(compute='_compute_document_count',
-                                    string='documents',
+                                    string='Document Count',
                                     help='Count of documents.')
 
     def _compute_document_count(self):
