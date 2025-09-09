@@ -63,11 +63,11 @@
 
 
                 </sheet>
-                <chatter/>
-                <div class="oe_chatter">
-<!--                    <field name="message_ids" options="{'open_attachments': True}" readonly="0"-->
-<!--                           string="Chatter Attachments"/>-->
-                </div>
+                <chatter open_attachments="True"/>
+<!--                <div class="oe_chatter">-->
+<!--&lt;!&ndash;                    <field name="message_ids" options="{'open_attachments': True}" readonly="0"&ndash;&gt;-->
+<!--&lt;!&ndash;                           string="Chatter Attachments"/>&ndash;&gt;-->
+<!--                </div>-->
             </form>
         </field>
     </record>
