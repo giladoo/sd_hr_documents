@@ -38,6 +38,26 @@ class SdHrDocumentsAttachments(models.Model):
 
     attachments = fields.Many2many('ir.attachment')
 
+    def execute_scan(self):
+        input_source = self.env.context.get('input_source', 'platen')
+        doc_format = self.env.context.get('doc_format', 'jpeg')
+        doc_format = doc_format if doc_format in ['pdf', 'jpeg'] else 'jpeg'
+        # print(f">>>>>>>>>>>>>>>>>>>\n input_source: {input_source}")
+        scan_ticket = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<scan:ScanSettings xmlns:pwg="http://www.pwg.org/schemas/2010/12/sm" xmlns:scan="http://schemas.hp.com/imaging/escl/2011/05/03">'
+            '<pwg:Version>2.63</pwg:Version>'
+            '<scan:Intent>Document</scan:Intent>'
+            '<scan:ColorMode>RGB24</scan:ColorMode>'
+            '<scan:XResolution>300</scan:XResolution>'
+            '<scan:YResolution>300</scan:YResolution>'
+            '</scan:ScanSettings>'
+        )
+        self.env['sd_scanner.scan'].execute_scan(self, '10.9.30.41', 'admin', 'Aa123456', scan_ticket, doc_format, input_source,)
+
+
+
+
     # TODO: Notify process
 
     @api.onchange('issue_date', 'expire_date', 'notify_days')

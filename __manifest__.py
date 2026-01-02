@@ -11,7 +11,7 @@
     'installable': True,
     'auto_install': False,
     'application': False,
-    'depends': ['base', 'hr',],
+    'depends': ['base', 'hr', 'sd_scanner'  ],
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',

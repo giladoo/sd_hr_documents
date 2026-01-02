@@ -51,6 +51,10 @@
                     </group>
                     <group>
 <!--                            <field name="attachments" widget="many2many_binary" class="" readonly="0" string="ATTACH"/>-->
+                        <button string="Scan ADF" name="execute_scan" type="object" class="btn btn-primary"
+                                context="{'input_source':'adf', 'doc_format': 'jpeg'}"/>
+                        <button string="Scan Flat" name="execute_scan" type="object" class="btn btn-primary"
+                                context="{'input_source':'platen', 'doc_format': 'jpeg'}"/>
                         <field name="attachments" widget="many2many_binary" class="" readonly="0" string="ATTACH"/>
 
                     </group>
