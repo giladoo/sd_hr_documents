@@ -5,7 +5,7 @@
         <field name="name">document.attachments.view.form</field>
         <field name="model">sd_hr_documents.attachments</field>
         <field name="arch" type="xml">
-            <form string="document Name" js_class="scanner_btn">
+            <form string="document Name">
                 <header>
                 <div class="oe_button_box">
                 </div>
