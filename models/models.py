@@ -55,8 +55,20 @@ class SdHrDocumentsAttachments(models.Model):
         )
         self.env['sd_scanner.scan'].execute_scan(self, '10.9.30.41', 'admin', 'Aa123456', scan_ticket, doc_format, input_source,)
 
+    # TODO: unlink:
+    #   if the attachments field is deleted, the related attachment must be remove from the record.
+    #   note: while a file is added to the attachment field, an attachment record is created and added to the record
 
+    def write(self, vals):
+        # print(f">>>>>>>> vals:\n{vals}")
+        attachments = vals.get('attachments', False)
+        if attachments:
+            for att in attachments:
+                if len(att) > 0 and att[0] == 3:
+                    attachment_id = self.env['ir.attachment'].search([('id', '=', att[1])])
+                    attachment_id and attachment_id.unlink()
 
+        return super().write(vals)
 
     # TODO: Notify process
 
@@ -70,9 +82,7 @@ class SdHrDocumentsAttachments(models.Model):
             if rec.expire_date:
                 if rec.issue_date and (rec.expire_date < rec.issue_date):
                     raise UserError(_("Expire date is not correct."))
-
                 expiration = int((rec.expire_date - today).days)
-
                 if expiration > int(rec.notify_days):
                     rec.state = 'valid'
                 elif expiration < 0:

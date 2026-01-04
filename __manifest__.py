@@ -20,7 +20,8 @@
     ],
 'assets': {
         'web.assets_backend':[
-            'sd_hr_documents/static/src/components/**/*'
+            'sd_hr_documents/static/src/components/**/*',
+            'sd_hr_documents/static/src/js/**/*',
         ],
 
     },

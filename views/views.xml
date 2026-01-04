@@ -5,7 +5,7 @@
         <field name="name">document.attachments.view.form</field>
         <field name="model">sd_hr_documents.attachments</field>
         <field name="arch" type="xml">
-            <form string="document Name">
+            <form string="document Name" js_class="scanner_btn">
                 <header>
                 <div class="oe_button_box">
                 </div>
@@ -50,7 +50,6 @@
                         </group>
                     </group>
                     <group>
-<!--                            <field name="attachments" widget="many2many_binary" class="" readonly="0" string="ATTACH"/>-->
                         <button string="Scan ADF" name="execute_scan" type="object" class="btn btn-primary"
                                 context="{'input_source':'adf', 'doc_format': 'jpeg'}"/>
                         <button string="Scan Flat" name="execute_scan" type="object" class="btn btn-primary"
